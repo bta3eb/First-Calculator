@@ -1,0 +1,90 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class Calc {
+	
+	public static double doMath(double first, double second, char op){
+		
+		if(op == '^') return Math.pow(first, second);
+		if(op == '+') return first + second;
+		if(op == '-') return first - second;
+		if(op == '*') return first * second;
+		if(op == '/') return first / second;
+		return 0;
+		
+	}
+	
+	public static void main(String[] args){
+		
+		Scanner scan = new Scanner(System.in);
+		System.out.println("Please enter an expression followed by \"=\".");
+		
+		String input = scan.nextLine();
+		ArrayList<String> inputs = new ArrayList<String>();
+		String num = "";
+		String op = "";
+		
+		for(int x = 0; x < input.length(); x++){
+			if(input.substring(x,x+1).equals(".")){
+				num = num + input.substring(x, x+1);
+				continue;
+			}
+			
+			if(input.substring(x,x+1).matches(".*\\d.*"))
+				num = num + input.substring(x, x+1);
+			
+			if(input.substring(x,x+1).equals(" ")) continue;
+			
+			if(input.substring(x, x+1).matches("[+-/*^]")){
+				op = input.substring(x,x+1);
+				inputs.add(num);
+				num = "";
+				inputs.add(op);	
+				op = "";
+				}
+			if(input.charAt(x) == '='){
+				inputs.add(num);
+				break;
+			}
+		}
+		while(inputs.size() > 1){
+			for(int x = 0; x < inputs.size(); x++){
+				
+				if(inputs.get(x).equals("^")){ 
+					double calculation = Calc.doMath(Double.parseDouble((String)inputs.get(x-1)), 
+							Double.parseDouble((String)inputs.get(x+1)), ((String)inputs.get(x)).charAt(0));
+					inputs.remove(x+1);
+					inputs.set(x,String.valueOf(calculation));
+					inputs.remove(x-1);
+					x = 0;
+				}
+			}
+			for(int x = 0; x < inputs.size(); x++){
+			
+				if(inputs.get(x).equals("*") || inputs.get(x).equals("/")){ 
+					double calculation = Calc.doMath(Double.parseDouble((String)inputs.get(x-1)), 
+							Double.parseDouble((String)inputs.get(x+1)), ((String)inputs.get(x)).charAt(0));
+					inputs.remove(x+1);
+					inputs.set(x,String.valueOf(calculation));
+					inputs.remove(x-1);
+					x = 0;
+				}
+			}
+			for(int x = 0; x < inputs.size(); x++){
+				
+				if(inputs.get(x).equals("+") || inputs.get(x).equals("-")){ 
+					double calculation = Calc.doMath(Double.parseDouble((String)inputs.get(x-1)), 
+							Double.parseDouble((String)inputs.get(x+1)), ((String)inputs.get(x)).charAt(0));
+					inputs.remove(x+1);
+					inputs.set(x,String.valueOf(calculation));
+					inputs.remove(x-1);
+					x = 0;
+				}
+			}
+			
+			
+			
+		}
+	System.out.println(inputs.get(0));
+	}
+}
